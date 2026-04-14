@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nova Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ── Animated Background ── -->
+  <div class="bg-grid"></div>
+  <canvas id="particles"></canvas>
+
+  <!-- ── Navigation ── -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <span class="logo-icon">⬡</span>
+      <span>NOVA</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#dashboard" class="active">Dashboard</a></li>
+      <li><a href="#messages">Messages</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ── Mobile Menu ── -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#dashboard" class="mobile-link">Dashboard</a>
+    <a href="#messages" class="mobile-link">Messages</a>
+    <a href="#about" class="mobile-link">About</a>
+  </div>
+
+  <!-- ── Hero Section ── -->
+  <section class="hero" id="dashboard">
+    <div class="hero-content">
+      <div class="hero-badge">Node.js Powered</div>
+      <h1 class="hero-title">
+        <span class="line">Welcome to</span>
+        <span class="line accent">NOVA</span>
+        <span class="line">Dashboard</span>
+      </h1>
+      <p class="hero-desc">A real-time Node.js application with live API integration, dynamic stats, and an immersive futuristic UI.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="scrollToSection('messages')">
+          <span>Explore</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <button class="btn-secondary" onclick="loadStats()">Live Stats</button>
+      </div>
+    </div>
+    <div class="hero-orb">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+      <div class="orb-text">
+        <span id="uptimeDisplay">00:00:00</span>
+        <small>Server Uptime</small>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Stats Section ── -->
+  <section class="stats-section" id="stats">
+    <div class="section-header">
+      <span class="section-tag">Live Data</span>
+      <h2>Server <span class="accent">Statistics</span></h2>
+    </div>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card" data-index="0">
+        <div class="stat-icon">🖥️</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-node">v??</span>
+          <span class="stat-label">Node Version</span>
+        </div>
+      </div>
+      <div class="stat-card" data-index="1">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-uptime">—</span>
+          <span class="stat-label">Uptime (sec)</span>
+        </div>
+      </div>
+      <div class="stat-card" data-index="2">
+        <div class="stat-icon">💾</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-mem">—</span>
+          <span class="stat-label">Memory Used (MB)</span>
+        </div>
+      </div>
+      <div class="stat-card" data-index="3">
+        <div class="stat-icon">📨</div>
+        <div class="stat-info">
+          <span class="stat-value" id="stat-msgs">—</span>
+          <span class="stat-label">Total Messages</span>
+        </div>
+      </div>
+    </div>
+    <div class="refresh-row">
+      <button class="btn-refresh" onclick="loadStats()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+        Refresh Stats
+      </button>
+      <span class="last-updated" id="lastUpdated">Not loaded yet</span>
+    </div>
+  </section>
+
+  <!-- ── Messages Section ── -->
+  <section class="messages-section" id="messages">
+    <div class="section-header">
+      <span class="section-tag">Full CRUD</span>
+      <h2>Live <span class="accent">Messages</span></h2>
+      <p>Powered by Node.js REST API — data persists during server session</p>
+    </div>
+
+    <div class="message-composer">
+      <div class="composer-inner">
+        <textarea id="msgInput" placeholder="Type your message here..." rows="3" maxlength="300"></textarea>
+        <div class="composer-footer">
+          <span class="char-count" id="charCount">0 / 300</span>
+          <button class="btn-send" id="sendBtn" onclick="sendMessage()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="messages-list" id="messagesList">
+      <div class="loading-msg">
+        <div class="spinner"></div>
+        <span>Fetching messages from server...</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── About Section ── -->
+  <section class="about-section" id="about">
+    <div class="about-grid">
+      <div class="about-text">
+        <span class="section-tag">The Stack</span>
+        <h2>Built with <span class="accent">Pure Node.js</span></h2>
+        <p>No Express. No frameworks. Just raw Node.js <code>http</code> module, static file serving, and a clean REST API — all from scratch.</p>
+        <ul class="stack-list">
+          <li><span class="dot"></span> Node.js HTTP Server (no Express)</li>
+          <li><span class="dot"></span> REST API — GET, POST, DELETE</li>
+          <li><span class="dot"></span> Static File Serving from <code>/public</code></li>
+          <li><span class="dot"></span> Vanilla HTML + CSS + JavaScript</li>
+          <li><span class="dot"></span> Canvas particle animations</li>
+          <li><span class="dot"></span> Fully responsive design</li>
+        </ul>
+      </div>
+      <div class="about-terminal">
+        <div class="terminal-header">
+          <span class="t-dot red"></span>
+          <span class="t-dot yellow"></span>
+          <span class="t-dot green"></span>
+          <span class="t-title">terminal</span>
+        </div>
+        <div class="terminal-body" id="terminalBody">
+          <p><span class="t-prompt">$</span> node server.js</p>
+          <p class="t-output">╔══════════════════════════════════════╗</p>
+          <p class="t-output">║   🚀  NOVA DASHBOARD SERVER           ║</p>
+          <p class="t-output">║   Running at http://localhost:3000    ║</p>
+          <p class="t-output">╚══════════════════════════════════════╝</p>
+          <p class="t-cursor"><span class="t-prompt">$</span> <span class="cursor-blink">▊</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <span class="logo-icon">⬡</span> NOVA
+      </div>
+      <p>Built with Node.js · Zero dependencies · Pure web stack</p>
+      <p class="footer-time" id="footerTime"></p>
+    </div>
+  </footer>
+
+  <!-- ── Toast Notification ── -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
