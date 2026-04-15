@@ -55,6 +55,8 @@ A single EC2 instance is used to host:
 * Application container
 * Monitoring stack (Prometheus + Grafana)
 
+Jenkins is configured with appropriate Docker permissions to build and run containers.
+
 ---
 
 ## ⚙️ Step 1: Install Required Tools
@@ -187,7 +189,7 @@ kubectl apply -f k8s/service.yaml
 
 * Horizontal scaling using replicas
 * Improved availability
-* Better traffic distribution
+* Better traffic handling
 
 ---
 
