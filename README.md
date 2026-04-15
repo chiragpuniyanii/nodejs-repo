@@ -227,15 +227,6 @@ Sensitive information such as credentials, tokens, and server-specific details a
 
 ---
 
-## 🏆 Production Considerations
-
-* Use separate server for Jenkins
-* Secure credentials using secret management
-* Use HTTPS and domain
-* Consider Kubernetes for scaling
-
----
-
 ## 👨‍💻 Author
 
 Chirag Puniyani
