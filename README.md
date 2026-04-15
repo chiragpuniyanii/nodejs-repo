@@ -4,7 +4,7 @@
 
 This project demonstrates a complete end-to-end DevOps pipeline where a Node.js application is built, tested, containerized, deployed, and monitored using industry-standard tools.
 
-The pipeline is fully automated using Jenkins and integrates continuous integration, continuous deployment, and monitoring.
+The pipeline is fully automated using Jenkins and follows a production-style workflow including CI/CD and monitoring.
 
 ---
 
@@ -20,14 +20,9 @@ The pipeline is fully automated using Jenkins and integrates continuous integrat
 
 ---
 
-## ☁️ Infrastructure Setup (AWS EC2)
+## ☁️ Infrastructure Setup
 
-An EC2 instance is used to host Jenkins, Docker, application, and monitoring stack.
-
-### EC2 Details
-
-* Public IP: 98.91.27.15
-* OS: Ubuntu
+An EC2 instance is used to host Jenkins, Docker, the application, and the monitoring stack.
 
 ---
 
@@ -65,23 +60,23 @@ sudo systemctl start jenkins
 
 ## 🔐 Step 2: Access Jenkins
 
-Open Jenkins:
+Jenkins can be accessed via:
 
-http://98.91.27.15:8080
+```text
+http://<JENKINS-SERVER-IP>:8080
+```
 
-Get initial password:
+Get initial admin password:
 
 ```bash
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 
-Complete setup and install suggested plugins.
-
 ---
 
 ## 📦 Step 3: CI/CD Pipeline Setup
 
-A Jenkins pipeline is configured using a `Jenkinsfile` stored in the repository.
+A Jenkins pipeline is defined using a `Jenkinsfile` stored in the repository.
 
 ### Pipeline Stages
 
@@ -89,61 +84,45 @@ A Jenkins pipeline is configured using a `Jenkinsfile` stored in the repository.
 2. Build Docker image
 3. Run tests inside container
 4. Push image to Docker Hub
-5. Deploy container on EC2
+5. Deploy container on server
 
 ---
 
 ## 🔔 CI/CD Automation using Webhook
 
-To enable automatic pipeline execution, a webhook is configured between GitHub and Jenkins.
+Webhook integration is configured to trigger the pipeline automatically on every code push.
 
-### 🔹 How it works
+### Flow:
 
-1. Developer pushes code to GitHub
-2. GitHub sends a webhook event to Jenkins
-3. Jenkins triggers the pipeline automatically
-4. CI/CD pipeline executes
-
----
-
-### 🔹 Webhook Configuration
-
-* GitHub → Settings → Webhooks
-* Payload URL:
-  http://98.91.27.15:8080/github-webhook/
-* Content Type: application/json
-
----
-
-### 🔹 Jenkins Configuration
-
-* Pipeline configured with GitHub integration
-* Enabled: "GitHub hook trigger for GITScm polling"
+1. Code pushed to GitHub
+2. GitHub sends webhook event
+3. Jenkins triggers pipeline
+4. Deployment happens automatically
 
 ---
 
 ## 🐳 Step 4: Docker Build & Push
 
-Docker image is built and pushed to Docker Hub.
-
 ```bash
-docker build -t chiragg619/nodejs-app .
-docker push chiragg619/nodejs-app:latest
+docker build -t <docker-username>/nodejs-app .
+docker push <docker-username>/nodejs-app:latest
 ```
 
 ---
 
 ## 🚀 Step 5: Deployment
 
-The application is deployed on EC2 using Docker.
-
 ```bash
-docker run -d -p 80:3000 chiragg619/nodejs-app:latest
+docker run -d -p 80:3000 <docker-username>/nodejs-app:latest
 ```
 
-### 🌐 Application URL
+---
 
-http://98.91.27.15
+## 🌐 Application Access
+
+```text
+http://<EC2-PUBLIC-IP>
+```
 
 ---
 
@@ -153,7 +132,7 @@ Monitoring is implemented using Prometheus and Grafana.
 
 ---
 
-### 🔹 Run Node Exporter (System Metrics)
+### 🔹 Run Node Exporter
 
 ```bash
 docker run -d -p 9100:9100 --name node-exporter prom/node-exporter
@@ -161,7 +140,7 @@ docker run -d -p 9100:9100 --name node-exporter prom/node-exporter
 
 ---
 
-### 🔹 Run cAdvisor (Container Metrics)
+### 🔹 Run cAdvisor
 
 ```bash
 docker run -d \
@@ -176,7 +155,7 @@ gcr.io/cadvisor/cadvisor
 
 ---
 
-### 🔹 Create Prometheus Configuration
+### 🔹 Prometheus Configuration
 
 ```yaml
 global:
@@ -185,11 +164,11 @@ global:
 scrape_configs:
   - job_name: 'node-exporter'
     static_configs:
-      - targets: ['98.91.27.15:9100']
+      - targets: ['<EC2-PUBLIC-IP>:9100']
 
   - job_name: 'cadvisor'
     static_configs:
-      - targets: ['98.91.27.15:8081']
+      - targets: ['<EC2-PUBLIC-IP>:8081']
 ```
 
 ---
@@ -214,19 +193,13 @@ docker run -d -p 3001:3000 --name grafana grafana/grafana
 
 ---
 
-### 🔹 Grafana Setup
+### 🔹 Grafana Access
 
-* URL: http://98.91.27.15:3001
-* Username: admin
-* Password: chirag
+```text
+http://<EC2-PUBLIC-IP>:3001
+```
 
-Add Prometheus data source:
-
-http://98.91.27.15:9090
-
-Import Dashboard:
-
-* ID: 1860 (Node Exporter Full)
+(Default credentials can be configured)
 
 ---
 
@@ -236,11 +209,9 @@ Developer → Git Push → GitHub → Jenkins → Build → Test → Push → De
 
 ---
 
-## 🔐 Credentials Management
+## 🔐 Security Note
 
-Sensitive credentials such as Docker Hub login details are securely stored in Jenkins using the built-in credentials manager.
-
-No secrets are exposed in the repository.
+Sensitive information such as credentials, tokens, and server-specific details are not included in this repository to follow security best practices.
 
 ---
 
@@ -249,19 +220,19 @@ No secrets are exposed in the repository.
 * Automated CI/CD pipeline
 * Webhook-based automation
 * Dockerized application
-* Continuous deployment on EC2
+* Continuous deployment
 * Container-based testing
-* Real-time monitoring
-* Full observability (system + container metrics)
+* Monitoring with Prometheus & Grafana
+* System and container observability
 
 ---
 
 ## 🏆 Production Considerations
 
-* Jenkins should run on a separate server
-* Use secure secrets management
-* Enable HTTPS and domain
-* Use Kubernetes for scaling
+* Use separate server for Jenkins
+* Secure credentials using secret management
+* Use HTTPS and domain
+* Consider Kubernetes for scaling
 
 ---
 
