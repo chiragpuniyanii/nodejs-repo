@@ -15,5 +15,5 @@ spec:
       containers:
       - name: nodejs
         image: chiragg619/nodejs-app:latest
-        ports:
+        ports: 
         - containerPort: 3000
