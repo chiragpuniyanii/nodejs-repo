@@ -8,6 +8,12 @@ The pipeline is fully automated using Jenkins and follows a production-style wor
 
 ---
 
+## 🎯 Objective
+
+The objective of this project is to design and implement a CI/CD pipeline that automatically builds, tests, and deploys a containerized application whenever code is pushed to the repository.
+
+---
+
 ## 🛠️ Tech Stack
 
 * GitHub – Source Code Management
@@ -17,6 +23,20 @@ The pipeline is fully automated using Jenkins and follows a production-style wor
 * AWS EC2 – Deployment Server
 * Prometheus – Monitoring
 * Grafana – Visualization
+
+---
+
+## 📂 Project Structure
+
+```
+.
+├── server.js
+├── package.json
+├── Dockerfile
+├── Jenkinsfile
+├── prometheus.yml
+└── README.md
+```
 
 ---
 
@@ -60,9 +80,7 @@ sudo systemctl start jenkins
 
 ## 🔐 Step 2: Access Jenkins
 
-Jenkins can be accessed via:
-
-```text
+```
 http://<JENKINS-SERVER-IP>:8080
 ```
 
@@ -76,28 +94,21 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 
 ## 📦 Step 3: CI/CD Pipeline Setup
 
-A Jenkins pipeline is defined using a `Jenkinsfile` stored in the repository.
+A Jenkins pipeline is defined using a `Jenkinsfile`.
 
 ### Pipeline Stages
 
-1. Checkout code from GitHub
-2. Build Docker image
-3. Run tests inside container
-4. Push image to Docker Hub
-5. Deploy container on server
+* Checkout Code
+* Build Docker Image
+* Run Tests
+* Push Image to Docker Hub
+* Deploy Container
 
 ---
 
 ## 🔔 CI/CD Automation using Webhook
 
-Webhook integration is configured to trigger the pipeline automatically on every code push.
-
-### Flow:
-
-1. Code pushed to GitHub
-2. GitHub sends webhook event
-3. Jenkins triggers pipeline
-4. Deployment happens automatically
+The pipeline is automatically triggered using GitHub webhook on every code push.
 
 ---
 
@@ -120,7 +131,7 @@ docker run -d -p 80:3000 <docker-username>/nodejs-app:latest
 
 ## 🌐 Application Access
 
-```text
+```
 http://<EC2-PUBLIC-IP>
 ```
 
@@ -130,88 +141,44 @@ http://<EC2-PUBLIC-IP>
 
 Monitoring is implemented using Prometheus and Grafana.
 
----
+### Tools Used
 
-### 🔹 Run Node Exporter
-
-```bash
-docker run -d -p 9100:9100 --name node-exporter prom/node-exporter
-```
-
----
-
-### 🔹 Run cAdvisor
-
-```bash
-docker run -d \
---name cadvisor \
--p 8081:8080 \
---volume=/:/rootfs:ro \
---volume=/var/run:/var/run:ro \
---volume=/sys:/sys:ro \
---volume=/var/lib/docker/:/var/lib/docker:ro \
-gcr.io/cadvisor/cadvisor
-```
-
----
-
-### 🔹 Prometheus Configuration
-
-```yaml
-global:
-  scrape_interval: 5s
-
-scrape_configs:
-  - job_name: 'node-exporter'
-    static_configs:
-      - targets: ['<EC2-PUBLIC-IP>:9100']
-
-  - job_name: 'cadvisor'
-    static_configs:
-      - targets: ['<EC2-PUBLIC-IP>:8081']
-```
-
----
-
-### 🔹 Run Prometheus
-
-```bash
-docker run -d \
--p 9090:9090 \
--v $(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml \
---name prometheus \
-prom/prometheus
-```
-
----
-
-### 🔹 Run Grafana
-
-```bash
-docker run -d -p 3001:3000 --name grafana grafana/grafana
-```
-
----
-
-### 🔹 Grafana Access
-
-```text
-http://<EC2-PUBLIC-IP>:3001
-```
-
-(Default credentials can be configured)
+* Node Exporter (System Metrics)
+* cAdvisor (Container Metrics)
+* Prometheus (Metrics Collection)
+* Grafana (Visualization)
 
 ---
 
 ## 🔄 CI/CD Flow
 
+```
 Developer → Git Push → GitHub → Jenkins → Build → Test → Push → Deploy
+```
+
+---
+
+## ☸️ Kubernetes Deployment (Optional)
+
+The application can also be deployed on Kubernetes for scalability.
+
+Kubernetes manifests are included:
+
+* deployment.yaml
+* service.yaml
+
+These can be applied using:
+
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+
+This enables horizontal scaling using multiple replicas.
 
 ---
 
 ## 🔐 Security Note
 
-Sensitive information such as credentials, tokens, and server-specific details are not included in this repository to follow security best practices.
+Sensitive information such as credentials, tokens, and server-specific details are not included in this repository.
 
 ---
 
@@ -221,9 +188,8 @@ Sensitive information such as credentials, tokens, and server-specific details a
 * Webhook-based automation
 * Dockerized application
 * Continuous deployment
-* Container-based testing
 * Monitoring with Prometheus & Grafana
-* System and container observability
+* Kubernetes-ready deployment (optional scalability)
 
 ---
 
