@@ -49,14 +49,11 @@ pipeline {
                 echo "Deploying latest container..."
 
                 sh '''
-                    # Stop and remove old container if exists
                     docker stop ${CONTAINER} || true
                     docker rm ${CONTAINER} || true
 
-                    # Pull latest image
                     docker pull ${IMAGE_NAME}:latest
 
-                    # Run new container
                     docker run -d -p ${APP_PORT}:3000 --name ${CONTAINER} ${IMAGE_NAME}:latest
                 '''
             }
