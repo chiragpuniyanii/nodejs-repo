@@ -1,16 +1,18 @@
 # 🚀 End-to-End DevOps CI/CD Pipeline with Monitoring (Node.js Application)
 
+---
+
 ## 📌 Project Overview
 
-This project demonstrates a complete end-to-end DevOps pipeline where a Node.js application is built, tested, containerized, deployed, and monitored using industry-standard tools.
+Production-style DevOps pipeline demonstrating how a Node.js application is built, tested, containerized, deployed, and monitored using industry-standard tools.
 
-The pipeline is fully automated using Jenkins and follows a production-style workflow including CI/CD and monitoring.
+The pipeline is fully automated using Jenkins and follows CI/CD best practices with support for scalable deployment.
 
 ---
 
 ## 🎯 Objective
 
-The objective of this project is to design and implement a CI/CD pipeline that automatically builds, tests, and deploys a containerized application whenever code is pushed to the repository.
+To design and implement a CI/CD pipeline that automatically builds, tests, and deploys a containerized application whenever code is pushed to the repository.
 
 ---
 
@@ -35,6 +37,10 @@ The objective of this project is to design and implement a CI/CD pipeline that a
 ├── Dockerfile
 ├── Jenkinsfile
 ├── prometheus.yml
+├── .env.example
+├── k8s/                  # Kubernetes manifests
+│   ├── deployment.yaml
+│   └── service.yaml
 └── README.md
 ```
 
@@ -42,7 +48,12 @@ The objective of this project is to design and implement a CI/CD pipeline that a
 
 ## ☁️ Infrastructure Setup
 
-An EC2 instance is used to host Jenkins, Docker, the application, and the monitoring stack.
+A single EC2 instance is used to host:
+
+* Jenkins (CI/CD)
+* Docker (container runtime)
+* Application container
+* Monitoring stack (Prometheus + Grafana)
 
 ---
 
@@ -94,21 +105,21 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 
 ## 📦 Step 3: CI/CD Pipeline Setup
 
-A Jenkins pipeline is defined using a `Jenkinsfile`.
+The pipeline is defined using a `Jenkinsfile`.
 
 ### Pipeline Stages
 
-* Checkout Code
+* Checkout Source Code
 * Build Docker Image
-* Run Tests
+* Run Container-based Tests
 * Push Image to Docker Hub
-* Deploy Container
+* Deploy Container to Server
 
 ---
 
-## 🔔 CI/CD Automation using Webhook
+## 🔔 CI/CD Automation (Webhook)
 
-The pipeline is automatically triggered using GitHub webhook on every code push.
+GitHub webhook is configured to trigger the Jenkins pipeline automatically on every push.
 
 ---
 
@@ -121,7 +132,7 @@ docker push <docker-username>/nodejs-app:latest
 
 ---
 
-## 🚀 Step 5: Deployment
+## 🚀 Step 5: Deployment (EC2)
 
 ```bash
 docker run -d -p 80:3000 <docker-username>/nodejs-app:latest
@@ -139,14 +150,12 @@ http://<EC2-PUBLIC-IP>
 
 ## 📊 Step 6: Monitoring Setup
 
-Monitoring is implemented using Prometheus and Grafana.
+Monitoring is implemented using:
 
-### Tools Used
-
-* Node Exporter (System Metrics)
-* cAdvisor (Container Metrics)
-* Prometheus (Metrics Collection)
-* Grafana (Visualization)
+* Node Exporter → System metrics
+* cAdvisor → Container metrics
+* Prometheus → Metrics collection
+* Grafana → Visualization
 
 ---
 
@@ -158,41 +167,48 @@ Developer → Git Push → GitHub → Jenkins → Build → Test → Push → De
 
 ---
 
-## ☸️ Kubernetes Deployment (Optional)
+## ☸️ Kubernetes Deployment (Optional - Scalable Architecture)
 
-The application can also be deployed on Kubernetes for scalability.
+The application is also Kubernetes-ready for handling increased traffic and scaling requirements.
 
-Kubernetes manifests are included:
+Kubernetes manifests are organized in the `k8s/` directory:
 
-* deployment.yaml
-* service.yaml
+* `k8s/deployment.yaml`
+* `k8s/service.yaml`
 
-These can be applied using:
+### Apply Kubernetes Deployment
 
-kubectl apply -f deployment.yaml
-kubectl apply -f service.yaml
+```bash
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+```
 
-This enables horizontal scaling using multiple replicas.
+### Benefits
+
+* Horizontal scaling using replicas
+* Improved availability
+* Better traffic distribution
 
 ---
 
 ## 🔐 Security Note
 
-Sensitive information such as credentials, tokens, and server-specific details are not included in this repository.
+Sensitive information such as credentials, tokens, and server-specific details are not included in this repository, following security best practices.
 
 ---
 
 ## 💡 Key Features
 
-* Automated CI/CD pipeline
-* Webhook-based automation
-* Dockerized application
-* Continuous deployment
+* Automated CI/CD pipeline using Jenkins
+* Webhook-based deployment trigger
+* Dockerized Node.js application
+* Continuous deployment on EC2
 * Monitoring with Prometheus & Grafana
-* Kubernetes-ready deployment (optional scalability)
+* Kubernetes-ready scalable architecture
+* Clean and structured repository
 
 ---
 
 ## 👨‍💻 Author
 
-Chirag Puniyani
+**Chirag Puniyani**
